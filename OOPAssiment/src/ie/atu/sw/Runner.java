@@ -7,9 +7,9 @@ import javax.swing.text.html.Option;
 
 public class Runner {
 	public static void main(String[] args) throws Exception {
-		//variables
+		// variables
 		int option;
-		
+
 		Scanner kb = new Scanner(System.in);
 		SearchAPI searchAPIRun = new SearchAPI();
 		// You should put the following code into a menu or Menu class
@@ -42,31 +42,30 @@ public class Runner {
 		}
 		searchAPIRun.running();// Make sure api is running
 		do {
-		System.out.print("Please pick one of the menu options: ");
-		option = kb.nextInt();
+			System.out.print("Please pick one of the menu options: ");
+			option = kb.nextInt();
 
-		/* Calling all the different menu options */
-		if (option == 1) {
-			searchAPIRun.textFile();
-		}
-		if (option == 2) {
-			searchAPIRun.url();
-		}
-		if (option == 3) {
-			searchAPIRun.outputFile();
-		}
-		if (option == 4) {
-			searchAPIRun.confiLexicon();
-		}
-		if (option == 5) {
-			searchAPIRun.exAnalyseReport();
-		}
-		System.out.println("Would yo like to quit(-1), if not (1)");
-		option=kb.nextInt();
-		
-		}while(option!=-1);
+			/* Calling all the different menu options */
+			if (option == 1) {
+				searchAPIRun.textFile();
+			}
+			if (option == 2) {
+				searchAPIRun.url();
+			}
+			if (option == 3) {
+				searchAPIRun.outputFile();
+			}
+			if (option == 4) {
+				searchAPIRun.confiLexicon();
+			}
+			if (option == 5) {
+				searchAPIRun.exAnalyseReport();
+			}
+			System.out.print("Would yo like to quit(-1), if not (1)");
+			option = kb.nextInt();
+
+		} while (option != -1);
 		return;
-		
 
 	}
 
@@ -96,10 +95,10 @@ public class Runner {
 		if (index > total)
 			return; // Out of range
 		int size = 50; // Must be less than console width
-		char done = '/'; // Change to whatever you like.
-		char todo = '|'; // Change to whatever you like.
-//		char done = '█'; // Change to whatever you like.
-//		char todo = '░'; // Change to whatever you like.
+//		char done = '/'; // Change to whatever you like.
+//		char todo = '|'; // Change to whatever you like.
+		char done = '█'; // Change to whatever you like.
+		char todo = '░'; // Change to whatever you like.
 
 		// Compute basic metrics for the meter
 		int complete = (100 * index) / total;
