@@ -3,8 +3,13 @@ package ie.atu.sw;
 //imports
 import java.util.*;
 
+import javax.swing.text.html.Option;
+
 public class Runner {
 	public static void main(String[] args) throws Exception {
+		//variables
+		int option;
+		
 		Scanner kb = new Scanner(System.in);
 		SearchAPI searchAPIRun = new SearchAPI();
 		// You should put the following code into a menu or Menu class
@@ -36,8 +41,9 @@ public class Runner {
 			Thread.sleep(10); // Slows things down so the animation is visible
 		}
 		searchAPIRun.running();// Make sure api is running
+		do {
 		System.out.print("Please pick one of the menu options: ");
-		int option = kb.nextInt();
+		option = kb.nextInt();
 
 		/* Calling all the different menu options */
 		if (option == 1) {
@@ -55,6 +61,12 @@ public class Runner {
 		if (option == 5) {
 			searchAPIRun.exAnalyseReport();
 		}
+		System.out.println("Would yo like to quit(-1), if not (1)");
+		option=kb.nextInt();
+		
+		}while(option!=-1);
+		return;
+		
 
 	}
 
