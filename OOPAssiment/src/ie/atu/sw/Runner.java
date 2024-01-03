@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Runner {
 
 	public static Scanner kb = new Scanner(System.in);
-	
+
 	public static void main(String[] args) throws Exception {
 		while (true) {
 			printHeader();
@@ -18,7 +18,7 @@ public class Runner {
 
 			handleMenuOption(choice);
 		}
-		
+
 		kb.close();
 	}
 
@@ -34,11 +34,11 @@ public class Runner {
 
 	private static void displayMenu() {
 		System.out.println("1. Specify Text File");
-	    System.out.println("2. Specify URL");
-	    System.out.println("3. Specify Output File");
-	    System.out.println("4. Configure Lexicons");
-	    System.out.println("5. Execute Analysis and Report");
-	    System.out.println("7. Exit");
+		System.out.println("2. Specify URL");
+		System.out.println("3. Specify Output File");
+		System.out.println("4. Configure Lexicons");
+		System.out.println("5. Execute Analysis and Report");
+		System.out.println("7. Exit");
 	}
 
 	private static int getUserChoice() {
@@ -63,7 +63,8 @@ public class Runner {
 			specifyURL();
 			break;
 		case 3:
-			specifyOutputFile();
+			// Pass the sentiment analysis report to specifyOutputFile
+			specifyOutputFile(AnalysisOption.performAnalysisAndReport());
 			break;
 		case 4:
 			configureLexicons();
@@ -86,8 +87,8 @@ public class Runner {
 		URLOption.execute();
 	}
 
-	private static void specifyOutputFile() {
-		OutputFileOption.execute();
+	private static void specifyOutputFile(String sentimentAnalysisReport) {
+	    OutputFileOption.execute(sentimentAnalysisReport);
 	}
 
 	private static void configureLexicons() {
@@ -98,7 +99,6 @@ public class Runner {
 		AnalysisOption.execute();
 	}
 
-	
 	/*
 	 * Terminal Progress Meter ----------------------- You might find the progress
 	 * meter below useful. The progress effect works best if you call this method
@@ -132,32 +132,31 @@ public class Runner {
 		}
 	}
 
-	
-	 private static void printProgress(int index, int total) {
-	        if (index > total)
-	            return; // Out of range
-	        int size = 50; // Must be less than console width
-	        char done = '█'; // Change to whatever you like.
-	        char todo = '░'; // Change to whatever you like.
+	private static void printProgress(int index, int total) {
+		if (index > total)
+			return; // Out of range
+		int size = 50; // Must be less than console width
+		char done = '█'; // Change to whatever you like.
+		char todo = '░'; // Change to whatever you like.
 
-	        // Compute basic metrics for the meter
-	        int complete = (100 * index) / total;
-	        int completeLen = size * complete / 100;
+		// Compute basic metrics for the meter
+		int complete = (100 * index) / total;
+		int completeLen = size * complete / 100;
 
-	        // StringBuilder for string concatenation inside a loop
-	        StringBuilder sb = new StringBuilder();
-	        sb.append("[");
-	        for (int i = 0; i < size; i++) {
-	            sb.append((i < completeLen) ? done : todo);
-	        }
+		// StringBuilder for string concatenation inside a loop
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int i = 0; i < size; i++) {
+			sb.append((i < completeLen) ? done : todo);
+		}
 
-	        // The line feed escape character "\r" returns the cursor to the
-	        // start of the current line. Calling print(...) overwrites the
-	        // existing line and creates the illusion of an animation.
-	        System.out.print("\r" + sb + "] " + complete + "%");
+		// The line feed escape character "\r" returns the cursor to the
+		// start of the current line. Calling print(...) overwrites the
+		// existing line and creates the illusion of an animation.
+		System.out.print("\r" + sb + "] " + complete + "%");
 
-	        // Once the meter reaches its max, move to a new line.
-	        if (done == total)
-	            System.out.println("\n");
-	    }
+		// Once the meter reaches its max, move to a new line.
+		if (done == total)
+			System.out.println("\n");
+	}
 }
