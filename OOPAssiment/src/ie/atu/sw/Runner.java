@@ -11,6 +11,7 @@ public class Runner {
     private static String filePath;
 
     public static void main(String[] args) throws Exception {
+    	Scanner kb = new Scanner(System.in);
         while (true) {
             printHeader();
             displayMenu();
@@ -20,7 +21,7 @@ public class Runner {
                 break;
             }
 
-            handleMenuOption(choice);
+            handleMenuOption(choice,kb);
         }
         OutputFileOption.shutdownExecutorService();
         kb.close();
@@ -47,14 +48,15 @@ public class Runner {
 
     public static int getUserChoice() {
         int choice = 0;
-        boolean validInput = false;
 
-        while (!validInput) {
-            try {
-                System.out.print("Select Option [1-7]: ");
-                choice = Integer.parseInt(kb.nextLine());
-                validInput = (choice >= 1 && choice <= 7);
-            } catch (NumberFormatException e) {
+        while (true) {
+            System.out.print("Select Option [1-7]: ");
+            String input = kb.nextLine().trim();
+
+            if (input.matches("\\d+")) {
+                choice = Integer.parseInt(input);
+                break;
+            } else {
                 System.out.println("Invalid input. Please enter a number.");
             }
         }
@@ -62,15 +64,18 @@ public class Runner {
         return choice;
     }
 
-    private static void handleMenuOption(int choice) {
+
+
+
+    private static void handleMenuOption(int choice, Scanner kb) {
         executorService.submit(() -> {
             try {
                 switch (choice) {
                     case 1:
-                        specifyTextFile();
+                        specifyTextFile(kb);
                         break;
                     case 2:
-                        specifyURL();
+                        //there was a url link here but issue with trying to get it to work and use of added twiiter donwload
                         break;
                     case 3:
                         specifyOutputFile(AnalysisOption.performAnalysisAndReport());
@@ -91,13 +96,9 @@ public class Runner {
         });
     }
 
-    private static void specifyTextFile() {
+    private static void specifyTextFile(Scanner kb) {
         TextFileOption.specifyTextFile();
         filePath = TextFileOption.getFilePath();
-    }
-
-    private static void specifyURL() {
-        URLOption.execute();
     }
 
     private static void specifyOutputFile(String sentimentAnalysisReport) {
@@ -112,13 +113,15 @@ public class Runner {
         AnalysisOption.execute();
     }
 
+	public static void setFilePath(String path) {
+		filePath = path;
+	}
+
     public static String getFilePath() {
         return filePath;
     }
 
-    public static void setFilePath(String path) {
-        filePath = path;
-    }
+
 
     // ... rest of the code for progress meter
 
