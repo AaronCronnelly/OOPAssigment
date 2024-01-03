@@ -1,0 +1,6 @@
+Sentiment Analysis Report:
+Positive Count: 172
+Negative Count: 13
+Overall Sentiment: Positive
+Lexicons Used:
+- /Users/aaroncronnelly/Documents/UNI YR3/OOPAssigment/OOPAssiment/lexicons/afinn.txt

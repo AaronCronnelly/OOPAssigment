@@ -2,34 +2,42 @@ package ie.atu.sw;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LexiconConfigOption {
+	 private static final Scanner kb = new Scanner(System.in);
+	private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private static List<String> selectedLexicons = new ArrayList<>();
 
-    private static List<String> selectedLexicons = new ArrayList<>();
+	public static void execute() {
+		System.out.println("Executing Lexicon Configuration Option");
+		executorService.submit(LexiconConfigOption::configureLexicons);
+	}
 
-    public static void execute() {
-        System.out.println("Executing Lexicon Configuration Option");
-        configureLexicons();
-    }
+	private static void configureLexicons() {
+		System.out.println("You selected to configure lexicons.");
 
-    private static void configureLexicons() {
-        System.out.println("You selected to configure lexicons.");
+		while (true) {
+			System.out.print("Enter the path of a lexicon file (or type 'done' to finish): ");
+			String lexiconPath = kb.nextLine().trim();
 
-        // Add your logic here for configuring lexicons
+			if (lexiconPath.equalsIgnoreCase("done")) {
+				break;
+			}
 
-        // Example: Prompt the user for lexicon configuration
-        System.out.print("Enter the path of a lexicon file (or type 'done' to finish): ");
-        String lexiconPath;
-        while (!(lexiconPath = Runner.kb.nextLine()).equalsIgnoreCase("done")) {
-            selectedLexicons.add(lexiconPath);
-            System.out.println("Lexicon file specified: " + lexiconPath);
-            System.out.print("Enter the path of another lexicon file (or type 'done' to finish): ");
-        }
+			selectedLexicons.add(lexiconPath);
+			System.out.println("Lexicon file specified: " + lexiconPath);
+		}
 
-        // You can now use the lexicon paths for further processing
-    }
+		// Debug print
+		System.out.println("Debug: Lexicons configured in LexiconConfigOption: " + selectedLexicons);
+		System.out.println("Debug: Current selectedLexicons: " + selectedLexicons);
 
-    public static List<String> getSelectedLexicons() {
-        return selectedLexicons;
-    }
+	}
+
+	public static List<String> getSelectedLexicons() {
+		return selectedLexicons;
+	}
 }

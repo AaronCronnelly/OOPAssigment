@@ -1,103 +1,128 @@
 package ie.atu.sw;
 
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Runner {
 
-	public static Scanner kb = new Scanner(System.in);
+    private static final Scanner kb = new Scanner(System.in);
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static String filePath;
 
-	public static void main(String[] args) throws Exception {
-		while (true) {
-			printHeader();
-			displayMenu();
-			int choice = getUserChoice();
-			if (choice == 7) {
-				System.out.println("Exiting program. Goodbye!");
-				break;
-			}
+    public static void main(String[] args) throws Exception {
+        while (true) {
+            printHeader();
+            displayMenu();
+            int choice = getUserChoice();
+            if (choice == 7) {
+                System.out.println("Exiting program. Goodbye!");
+                break;
+            }
 
-			handleMenuOption(choice);
-		}
+            handleMenuOption(choice);
+        }
+        OutputFileOption.shutdownExecutorService();
+        kb.close();
+    }
 
-		kb.close();
-	}
+    private static void printHeader() {
+        System.out.println(ConsoleColour.WHITE);
+        System.out.println("************************************************************");
+        System.out.println("*     ATU - Dept. of Computer Science & Applied Physics    *");
+        System.out.println("*                                                          *");
+        System.out.println("*             Virtual Threaded Sentiment Analyser          *");
+        System.out.println("*                                                          *");
+        System.out.println("************************************************************");
+    }
 
-	private static void printHeader() {
-		System.out.println(ConsoleColour.WHITE);
-		System.out.println("************************************************************");
-		System.out.println("*     ATU - Dept. of Computer Science & Applied Physics    *");
-		System.out.println("*                                                          *");
-		System.out.println("*             Virtual Threaded Sentiment Analyser          *");
-		System.out.println("*                                                          *");
-		System.out.println("************************************************************");
-	}
+    private static void displayMenu() {
+        System.out.println("1. Specify Text File");
+        System.out.println("2. Specify URL");
+        System.out.println("3. Specify Output File");
+        System.out.println("4. Configure Lexicons");
+        System.out.println("5. Execute Analysis and Report");
+        System.out.println("7. Exit");
+    }
 
-	private static void displayMenu() {
-		System.out.println("1. Specify Text File");
-		System.out.println("2. Specify URL");
-		System.out.println("3. Specify Output File");
-		System.out.println("4. Configure Lexicons");
-		System.out.println("5. Execute Analysis and Report");
-		System.out.println("7. Exit");
-	}
+    public static int getUserChoice() {
+        int choice = 0;
+        boolean validInput = false;
 
-	private static int getUserChoice() {
-		System.out.print(ConsoleColour.BLACK_BOLD_BRIGHT + "Select Option [1-7]> ");
-		int choice = -1;
+        while (!validInput) {
+            try {
+                System.out.print("Select Option [1-7]: ");
+                choice = Integer.parseInt(kb.nextLine());
+                validInput = (choice >= 1 && choice <= 7);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
 
-		try {
-			choice = Integer.parseInt(kb.nextLine());
-		} catch (NumberFormatException e) {
-			System.out.println("Invalid input. Please enter a number.");
-		}
+        return choice;
+    }
 
-		return choice;
-	}
+    private static void handleMenuOption(int choice) {
+        executorService.submit(() -> {
+            try {
+                switch (choice) {
+                    case 1:
+                        specifyTextFile();
+                        break;
+                    case 2:
+                        specifyURL();
+                        break;
+                    case 3:
+                        specifyOutputFile(AnalysisOption.performAnalysisAndReport());
+                        break;
+                    case 4:
+                        configureLexicons();
+                        break;
+                    case 5:
+                        showProgressMeter();
+                        executeAnalyseAndReport();
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please select a valid option.");
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-	private static void handleMenuOption(int choice) throws InterruptedException {
-		switch (choice) {
-		case 1:
-			specifyTextFile();
-			break;
-		case 2:
-			specifyURL();
-			break;
-		case 3:
-			// Pass the sentiment analysis report to specifyOutputFile
-			specifyOutputFile(AnalysisOption.performAnalysisAndReport());
-			break;
-		case 4:
-			configureLexicons();
-			break;
-		case 5:
-			showProgressMeter();
-			executeAnalyseAndReport();
-			break;
-		default:
-			System.out.println("Invalid choice. Please select a valid option.");
-		}
-	}
+    private static void specifyTextFile() {
+        TextFileOption.specifyTextFile();
+        filePath = TextFileOption.getFilePath();
+    }
 
-	// Implement methods for each menu option
-	private static void specifyTextFile() {
-		TextFileOption.execute();
-	}
+    private static void specifyURL() {
+        URLOption.execute();
+    }
 
-	private static void specifyURL() {
-		URLOption.execute();
-	}
+    private static void specifyOutputFile(String sentimentAnalysisReport) {
+        OutputFileOption.execute(sentimentAnalysisReport);
+    }
 
-	private static void specifyOutputFile(String sentimentAnalysisReport) {
-	    OutputFileOption.execute(sentimentAnalysisReport);
-	}
+    private static void configureLexicons() {
+        LexiconConfigOption.execute();
+    }
 
-	private static void configureLexicons() {
-		LexiconConfigOption.execute();
-	}
+    private static void executeAnalyseAndReport() {
+        AnalysisOption.execute();
+    }
 
-	private static void executeAnalyseAndReport() {
-		AnalysisOption.execute();
-	}
+    public static String getFilePath() {
+        return filePath;
+    }
+
+    public static void setFilePath(String path) {
+        filePath = path;
+    }
+
+    // ... rest of the code for progress meter
+
+
 
 	/*
 	 * Terminal Progress Meter ----------------------- You might find the progress
