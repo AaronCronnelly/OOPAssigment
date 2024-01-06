@@ -6,126 +6,116 @@ import java.util.concurrent.Executors;
 
 public class Runner {
 
-    private static final Scanner kb = new Scanner(System.in);
-    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private static String filePath;
+	private static final Scanner kb = new Scanner(System.in);
+	private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private static String filePath;
 
-    public static void main(String[] args) throws Exception {
-    	Scanner kb = new Scanner(System.in);
-        while (true) {
-            printHeader();
-            displayMenu();
-            int choice = getUserChoice();
-            if (choice == 7) {
-                System.out.println("Exiting program. Goodbye!");
-                break;
-            }
+	public static void main(String[] args) throws Exception {
+		while (true) {
+			printHeader();
+			displayMenu();
+			int choice = getUserChoice();
+			if (choice == 7) {
+				System.out.println("Exiting program. Goodbye!");
+				break;
+			}
 
-            handleMenuOption(choice,kb);
-        }
-        OutputFileOption.shutdownExecutorService();
-        kb.close();
-    }
+			handleMenuOption(choice);
+		}
+		OutputFileOption.shutdownExecutorService();
+		kb.close();
+	}
 
-    private static void printHeader() {
-        System.out.println(ConsoleColour.WHITE);
-        System.out.println("************************************************************");
-        System.out.println("*     ATU - Dept. of Computer Science & Applied Physics    *");
-        System.out.println("*                                                          *");
-        System.out.println("*             Virtual Threaded Sentiment Analyser          *");
-        System.out.println("*                                                          *");
-        System.out.println("************************************************************");
-    }
+	private static void printHeader() {
+		System.out.println(ConsoleColour.WHITE);
+		System.out.println("************************************************************");
+		System.out.println("*     ATU - Dept. of Computer Science & Applied Physics    *");
+		System.out.println("*                                                          *");
+		System.out.println("*             Virtual Threaded Sentiment Analyser          *");
+		System.out.println("*                                                          *");
+		System.out.println("************************************************************");
+	}
 
-    private static void displayMenu() {
-        System.out.println("1. Specify Text File");
-        System.out.println("2. Specify URL");
-        System.out.println("3. Specify Output File");
-        System.out.println("4. Configure Lexicons");
-        System.out.println("5. Execute Analysis and Report");
-        System.out.println("7. Exit");
-    }
+	private static void displayMenu() {
+		System.out.println("1. Specify Text File");
+		System.out.println("2. Specify URL");
+		System.out.println("3. Specify Output File");
+		System.out.println("4. Configure Lexicons");
+		System.out.println("5. Execute Analysis and Report");
+		System.out.println("7. Exit");
+	}
 
-    public static int getUserChoice() {
-        int choice = 0;
+	public static int getUserChoice() {
+	    int choice = 0;
 
-        while (true) {
-            System.out.print("Select Option [1-7]: ");
-            String input = kb.nextLine().trim();
+	    while (true) {
+	        System.out.print("Select Option [1-7]: ");
+	        String input = kb.nextLine().trim();  // Use kb.nextLine() to read the entire line
 
-            if (input.matches("\\d+")) {
-                choice = Integer.parseInt(input);
-                break;
-            } else {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
+	        if (input.matches("\\d+")) {
+	            choice = Integer.parseInt(input);
+	            break;
+	        } else {
+	            System.out.println("Invalid input. Please enter a number.");
+	        }
+	    }
 
-        return choice;
-    }
-
+	    return choice;
+	}
 
 
+	private static void handleMenuOption(int choice) {
+		executorService.submit(() -> {
+			try {
+				switch (choice) {
+				case 1:
+					TextFileOption.execute(kb);
+					filePath = TextFileOption.getFilePath();
+					break;
+				case 2:
+					// there was a url link here but issue with trying to get it to work and use of
+					// added Twitter download
+					break;
+				case 3:
+					specifyOutputFile(AnalysisOption.performAnalysisAndReport());
+					break;
+				case 4:
+					configureLexicons();
+					break;
+				case 5:
+					showProgressMeter();
+					executeAnalyseAndReport();
+					break;
+				default:
+					System.out.println("Invalid choice. Please select a valid option.");
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		});
+	}
 
-    private static void handleMenuOption(int choice, Scanner kb) {
-        executorService.submit(() -> {
-            try {
-                switch (choice) {
-                    case 1:
-                        specifyTextFile(kb);
-                        break;
-                    case 2:
-                        //there was a url link here but issue with trying to get it to work and use of added twiiter donwload
-                        break;
-                    case 3:
-                        specifyOutputFile(AnalysisOption.performAnalysisAndReport());
-                        break;
-                    case 4:
-                        configureLexicons();
-                        break;
-                    case 5:
-                        showProgressMeter();
-                        executeAnalyseAndReport();
-                        break;
-                    default:
-                        System.out.println("Invalid choice. Please select a valid option.");
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+	private static void specifyOutputFile(String sentimentAnalysisReport) {
+		OutputFileOption.execute(sentimentAnalysisReport);
+	}
 
-    private static void specifyTextFile(Scanner kb) {
-        TextFileOption.specifyTextFile();
-        filePath = TextFileOption.getFilePath();
-    }
+	private static void configureLexicons() {
+		LexiconConfigOption.execute();
+	}
 
-    private static void specifyOutputFile(String sentimentAnalysisReport) {
-        OutputFileOption.execute(sentimentAnalysisReport);
-    }
-
-    private static void configureLexicons() {
-        LexiconConfigOption.execute();
-    }
-
-    private static void executeAnalyseAndReport() {
-        AnalysisOption.execute();
-    }
+	private static void executeAnalyseAndReport() {
+		AnalysisOption.execute();
+	}
 
 	public static void setFilePath(String path) {
 		filePath = path;
 	}
 
-    public static String getFilePath() {
-        return filePath;
-    }
+	public static String getFilePath() {
+		return filePath;
+	}
 
-
-
-    // ... rest of the code for progress meter
-
-
+	// ... rest of the code for progress meter
 
 	/*
 	 * Terminal Progress Meter ----------------------- You might find the progress
